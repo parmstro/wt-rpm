@@ -3,7 +3,6 @@
 ## Compilation
 
 ### Dependencies
-
 #### Ping support
 
 If you are interested in supporting ping, you will have to install liboping.
@@ -11,6 +10,38 @@ If you are interested in supporting ping, you will have to install liboping.
 #### Raspberry Pi backend
 
 To compile the Raspberry Pi backend, please make sure you have installed libwiringPi.
+
+#### Building on Fedora ARM
+
+This assumes that you have created a base system for arm using the built in utilities in F26 or later for building raspberry pi3 installations. It is recommended if you have to expand your root filesystem to provide extra space for the tooling required to build the system. (parted is part of the base install and works well).
+
+This will take a while so run this before you go for lunch or a (big) coffee...
+
+dnf -y install git gcc gcc-c++ perl-devel wt wt-devel nginx libwiringPi
+dnf -y install boost-devel boost-python-devel boost-openmpi-devel boost-mpich-devel boost-static
+
+After you come back you can start on these
+
+mkdir ~/projects
+mkdir ~/projects/liboping
+git clone https://github.com/parmstro/wt-rpm.git
+git clone git://git.drogon.net/wiringPi
+
+This builds and installs wiringPi
+cd ~/projects/wiringPi
+./build
+
+This compiles and installs oping
+cd ~/projects/liboping
+wget https://noping.cc/files/liboping-1.10.0.tar.gz
+tar -zxvf liboping-1.10.0.tar.gz
+cd liboping-1.10.0/
+make install
+
+ln -s /opt/oping/include/oping.h /usr/include/oping.h
+ln -s /opt/oping/lib/liboping.so /usr/lib/liboping.so
+
+Now you can follow the steps below to compile and build wt-rpm
 
 ### Compilation
 
@@ -28,12 +59,27 @@ otherwise
 	cd build
 	cmake .. -DCMAKE_INSTALL_PREFIX=/usr $CONNECTOR
 
+OR when using liboping, use
+
+	cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DUSE_PING=YES $CONNECTOR
+
 Review the summary, fix as needed. Then do:
 
 	make
+	<insert coffee here/>
 	sudo make install
 
 ## Configuration
+
+A sample configuration file called wt-rpm.json is included in the wt-rpm directory. I recommend that you install the file in:
+/etc/wt-rpm/wt-rpm.json
+<pre>
+mkdir /etc/wt-rpm
+cp ~/project/wt-rpm/wt-rpm/wt-rpm.json /etc/wt-rpm/
+</pre>
+
+Then create a link in /etc/ to the file
+ln -s /etc/wt-rpm/wt-rpm.json /etc/wt-rpm.json
 
 Wt_rpm's configuration must be stored in one of the following location:
   - ./wt-rpm.json
@@ -153,3 +199,4 @@ Please also make sure that the user has the right to write to /dev/mem.
 
 If you are able to execute wt_rpm properly, you can use the shipped systemd
 unit (configured for the user wtrpm).
+
