@@ -101,7 +101,7 @@ Wt_rpm's configuration must be stored in one of the following location:
 The file must follow the JSON format and must contain the backend attribute.
 At the moment, there are only two acceptable attribute: rasprpm and dummy_rpm.
 Here is a sample configuration file:
-'''
+```
 {
   "backend": "rasprpm",
   "configuration": {
