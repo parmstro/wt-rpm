@@ -17,7 +17,8 @@ This assumes that you have created a base system for arm using the built in util
 
 This will take a while so run this before you go for lunch or a (big) coffee...
 
-```dnf -y install git gcc gcc-c++ perl-devel wt wt-devel nginx libwiringPi
+```
+dnf -y install git gcc gcc-c++ perl-devel wt wt-devel nginx libwiringPi
 dnf -y install boost-devel boost-python-devel boost-openmpi-devel boost-mpich-devel boost-static
 ```
 
