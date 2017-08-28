@@ -101,99 +101,99 @@ Wt_rpm's configuration must be stored in one of the following location:
 The file must follow the JSON format and must contain the backend attribute.
 At the moment, there are only two acceptable attribute: rasprpm and dummy_rpm.
 Here is a sample configuration file:
-
+'''
 {
-        "backend": "rasprpm",
-        "configuration": {
-                "computers": [
-                        {
-                                "name": "pc1",
-                                "ip_address": "192.168.0.42",
-                                "read_acl": ["all"],
-                                "write_acl": [],
+  "backend": "rasprpm",
+  "configuration": {
+    "computers": [
+      {
+        "name": "pc1",
+        "ip_address": "192.168.0.42",
+        "read_acl": ["all"],
+        "write_acl": [],
 
-                                "power_led_gpio": {
-                                        "pin": 6,
-                                        "inverted": "true"
-                                },
+        "power_led_gpio": {
+          "pin": 6,
+          "inverted": "true"
+        },
 
-                                "power_switch_gpio": {
-                                        "pin": 8,
-                                        "inverted": "false"
-                                },
+        "power_switch_gpio": {
+          "pin": 8,
+          "inverted": "false"
+        },
 
-                                "atx_switch_gpio": {
-                                        "pin": 10,
-                                        "inverted": "false"
-                                }
-                        },
-
-                        {
-                                "name": "pc2",
-                                "ip_address": "192.168.0.43",
-                                "read_acl": ["toto", "john"],
-                                "write_acl": ["toto"],
-
-                                "power_led_gpio": {
-                                        "pin": 1,
-                                        "inverted": "true"
-                                },
-
-                                "power_switch_gpio": {
-                                        "pin": 0,
-                                        "inverted": "false"
-                                },
-
-                                "atx_switch_gpio": {
-                                        "pin": 7,
-                                        "inverted": "false"
-                                }
-                        }
-                ]
+        "atx_switch_gpio": {
+          "pin": 10,
+          "inverted": "false"
         }
-}
+      },
 
+      {
+        "name": "pc2",
+        "ip_address": "192.168.0.43",
+        "read_acl": ["toto", "john"],
+        "write_acl": ["toto"],
+
+        "power_led_gpio": {
+          "pin": 1,
+          "inverted": "true"
+        },
+
+        "power_switch_gpio": {
+          "pin": 0,
+          "inverted": "false"
+        },
+
+        "atx_switch_gpio": {
+          "pin": 7,
+          "inverted": "false"
+        }
+      }
+    ]
+  }
+}
+```
 ## Authentication
 
 If you want to authenticate users before allowing them to list and control
 computers, you will need to use an http server such as nginx. Here is an example:
-
+```
 worker_processes  1;
 events {
-    worker_connections  1024;
+  worker_connections  1024;
 }
 http {
-    include       mime.types;
-    default_type  application/octet-stream;
+  include       mime.types;
+  default_type  application/octet-stream;
 
-    keepalive_timeout  65;
+  keepalive_timeout  65;
 
-    gzip  on;
+  gzip  on;
 
-    server {
-        listen       443 ssl;
-        server_name  localhost;
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
-        ssl_certificate_key /etc/nginx/ssl/nginx.key;
+  server {
+    listen       443 ssl;
+    server_name  localhost;
+    ssl_certificate /etc/nginx/ssl/nginx.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
-         # Wt
-        location /resources/ {
-            root   /usr/share/Wt/;
-            index  index.html index.htm;
-        }
-
-        location / {
-            root   /usr/share/nginx/html;
-            index  index.html index.htm;
-
-            auth_basic "WtRPM";
-            auth_basic_user_file /etc/nginx/htpasswd;
-
-            proxy_pass http://127.0.0.1:9090/;
-        }
+    # Wt
+    location /resources/ {
+      root   /usr/share/Wt/;
+      index  index.html index.htm;
     }
-}
 
+    location / {
+      root   /usr/share/nginx/html;
+      index  index.html index.htm;
+
+      auth_basic "WtRPM";
+      auth_basic_user_file /etc/nginx/htpasswd;
+
+      proxy_pass http://127.0.0.1:9090/;
+    }
+  }
+}
+```
 Don't forget to use SSL otherwise, the passwords will be sent through the network
 in plain text!
 
